@@ -1,0 +1,14 @@
+data:
+  train_split: 0.6
+  val_split: 0.2
+  test_split: 0.2
+
+automata:
+  window_size: 5
+  alphabet_size: 4
+
+training:
+  batch_size: 32
+  max_epochs: 50
+  early_stopping_patience: 5
+  random_seeds: [42, 123, 456, 789, 1011]
