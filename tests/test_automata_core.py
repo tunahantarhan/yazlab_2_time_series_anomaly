@@ -59,3 +59,30 @@ def test_extract_patterns():
     
     # "-" ile ayrılmış sembollerin sayısı window_size kadar olmalı
     assert len(patterns[0].split('-')) == preprocessor.window_size
+    
+def test_calculate_transition_probabilities():
+    preprocessor = AutomataPreprocessor()
+    
+    # mock pattern listesi
+    patterns = ["0-1", "1-2", "0-1", "2-0", "0-1"]
+    
+    # geçiş mantığı:
+        # "0-1" -> "1-2" (x1)
+        # "1-2" -> "0-1" (x1)
+        # "0-1" -> "2-0" (x1)
+        # "2-0" -> "0-1" (x1)
+        # "0-1" (geçiş yok)
+        # ========================================================
+        # "0-1" toplam 2 kere state geçişi yapmış ("1-2" ve "2-0")
+        # olasılıklar her iki geçiş için "0.5" olmalı
+        # "1-2" toplam 1 kere state geçişi yapmış ("0-1")
+        # olasılık tek geçiş için "1.0" olmalı.
+    
+    # metodu çağırma
+    transitions = preprocessor.calculate_transition_probabilities(patterns)
+    
+    # doğrulamalar
+    assert "0-1" in transitions
+    assert transitions["0-1"]["1-2"] == 0.5
+    assert transitions["0-1"]["2-0"] == 0.5
+    assert transitions["1-2"]["0-1"] == 1.0
