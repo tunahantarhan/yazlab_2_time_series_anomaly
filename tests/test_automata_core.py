@@ -87,6 +87,26 @@ def test_calculate_transition_probabilities():
     assert transitions["0-1"]["2-0"] == 0.5
     assert transitions["1-2"]["0-1"] == 1.0
     
+def test_calculate_path_probability():
+    preprocessor = AutomataPreprocessor()
+    
+    # mock geçiş olasılıkları (transition probabilities) tablosu
+    transition_probs = {
+        "0-1": {"1-2": 0.5, "2-0": 0.5},
+        "1-2": {"2-0": 0.8, "0-0": 0.2},
+        "2-0": {"0-1": 1.0}
+    }
+    
+    # mock path (state dizisi)
+    path = ["0-1", "1-2", "2-0"]
+    
+    # beklenen path olasılığı: 
+        # P(0-1 -> 1-2) * P(1-2 -> 2-0) = 0.5 * 0.8 = 0.40
+        
+    # metodu çağırma
+    path_prob = preprocessor.calculate_path_probability(path, transition_probs)
+    assert path_prob == 0.40
+    
 def test_find_closest_pattern_levenshtein():
     preprocessor = AutomataPreprocessor()
     
