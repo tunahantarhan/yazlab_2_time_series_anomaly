@@ -32,3 +32,30 @@ def test_apply_sax():
     
     sax_result = preprocessor.apply_sax(paa_data)
     np.testing.assert_array_equal(sax_result, expected_sax)
+
+def test_extract_patterns():
+    preprocessor = AutomataPreprocessor()
+    
+    # test için config kuralı ezilerek hard-coded değer atanır
+    preprocessor.window_size = 2
+    preprocessor.alphabet_size = 3
+    
+    # 6 elemanlı basit bir seri
+    time_series = np.array([1, 2, 3, 4, 5, 6])
+    
+    # subsequence_length = 4 olan bir kayan pencere kullanılarak pattern çıkarma testi yapılır
+    # 1. pencere: [1, 2, 3, 4] // 2. pencere: [2, 3, 4, 5] // 3. pencere: [3, 4, 5, 6]
+    # toplam 3 pattern çıkarılmalı
+    subsequence_length = 4
+    
+    # metodu çağırma
+    patterns = preprocessor.extract_patterns(time_series, subsequence_length)
+    
+    # 3 adet pencere kaydırılmış olmalı
+    assert len(patterns) == 3
+    
+    # çıkan ilk pattern'in string formatında olduğu varsayılır
+    assert isinstance(patterns[0], str)
+    
+    # "-" ile ayrılmış sembollerin sayısı window_size kadar olmalı
+    assert len(patterns[0].split('-')) == preprocessor.window_size
