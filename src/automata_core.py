@@ -45,3 +45,26 @@ class AutomataPreprocessor:
         sax_symbols = np.digitize(normalized_data, bp)
         
         return sax_symbols
+    
+    def extract_patterns(self, time_series, subsequence_length=None):
+        # zaman serisi üzerinde kayan pencere (sliding window) uygulayarak örüntü (pattern) çıkarılır
+        # eğer özel olarak parametre gönderilmediyse merkezi config'den alınır
+        if subsequence_length is None:
+            subsequence_length = config['automata']['subsequence_length']
+            
+        patterns = []
+        # seri baştan sona birim birim kaydırılarak dolaşılır
+        for i in range(len(time_series) - subsequence_length + 1):
+            window = time_series[i : i + subsequence_length]
+            
+            # paa uygulanır
+            paa_result = self.apply_paa(window)
+            
+            # sax uygulanır
+            sax_result = self.apply_sax(paa_result)
+            
+            # çıkan sembolleri tire ile birleştirip state oluşturulur ("0-1-2" vb.)
+            pattern_str = "-".join(map(str, sax_result))
+            patterns.append(pattern_str)
+            
+        return patterns
