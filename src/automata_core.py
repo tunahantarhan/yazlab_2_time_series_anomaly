@@ -68,3 +68,29 @@ class AutomataPreprocessor:
             patterns.append(pattern_str)
             
         return patterns
+
+    def calculate_transition_probabilities(self, patterns):
+        # çıkarılan örüntüler (pattern/state) arasındaki geçiş olasılıkları frekans tabanlı hesaplanır
+        transition_counts = {}
+        
+        # stateler arası geçişler sayılır
+        for i in range(len(patterns) - 1):
+            current_state = patterns[i]
+            next_state = patterns[i + 1]
+            
+            if current_state not in transition_counts:
+                transition_counts[current_state] = {}
+            if next_state not in transition_counts[current_state]:
+                transition_counts[current_state][next_state] = 0
+                
+            transition_counts[current_state][next_state] += 1
+            
+        # geçiş sayıları olasılıklara (0.0 - 1.0) çevrilir
+        probabilities = {}
+        for current_state, next_states in transition_counts.items():
+            total_transitions = sum(next_states.values())
+            probabilities[current_state] = {}
+            for next_state, count in next_states.items():
+                probabilities[current_state][next_state] = count / total_transitions
+                
+        return probabilities
