@@ -86,3 +86,20 @@ def test_calculate_transition_probabilities():
     assert transitions["0-1"]["1-2"] == 0.5
     assert transitions["0-1"]["2-0"] == 0.5
     assert transitions["1-2"]["0-1"] == 1.0
+    
+def test_find_closest_pattern_levenshtein():
+    preprocessor = AutomataPreprocessor()
+    
+    # mock bilinen pattern listesi
+    known_patterns = ["0-0-0", "2-2-2", "1-2-3"]
+    
+    # mock bilinmeyen/daha önce görülmemiş pattern
+    unseen_pattern = "0-0-1"
+    
+    # levenshtein mesafesi mantığına göre "0-0-1" pattern'ine en yakın olan aranır
+    # bilinen pattern'ler ile aradaki birim fark sayılarına bakılır
+    # en az fark olan pattern "0-0-0" olmalı (1 birim fark)
+    
+    # metodu çağırma
+    closest = preprocessor.find_closest_pattern(unseen_pattern, known_patterns)
+    assert closest == "0-0-0"
