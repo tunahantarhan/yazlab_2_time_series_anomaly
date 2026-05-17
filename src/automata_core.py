@@ -94,6 +94,28 @@ class AutomataPreprocessor:
                 probabilities[current_state][next_state] = count / total_transitions
                 
         return probabilities
+    
+    def calculate_path_probability(self, path, transition_probabilities):
+        # verilen bir örüntü dizisinin (path) toplam gerçekleşme olasılığı hesaplanır
+        # böylece güven skoru (confidence score) elde edilir
+        if len(path) < 2:
+            return 1.0  # geçiş yoksa olasılık %100'dür
+            
+        total_probability = 1.0
+        
+        for i in range(len(path) - 1):
+            current_state = path[i]
+            next_state = path[i + 1]
+            
+            # eğer pattern matriste varsa olasılığı alınır
+            if current_state in transition_probabilities and next_state in transition_probabilities[current_state]:
+                prob = transition_probabilities[current_state][next_state]
+            else: # görülmemiş bir pattern ise olasılık 0 olur
+                prob = 0.0
+                
+            total_probability *= prob
+            
+        return total_probability
 
     def _levenshtein_distance(self, s1, s2):
         # iki örüntü arasındaki levenshtein mesafesi hesaplanır
