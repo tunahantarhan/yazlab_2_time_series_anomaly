@@ -94,3 +94,41 @@ class AutomataPreprocessor:
                 probabilities[current_state][next_state] = count / total_transitions
                 
         return probabilities
+
+    def _levenshtein_distance(self, s1, s2):
+        # iki örüntü arasındaki levenshtein mesafesi hesaplanır
+        # satırlar -> s1, sütunlar -> s2
+        m, n = len(s1), len(s2)
+        distance_matrix = np.zeros((m + 1, n + 1), dtype=int)
+
+        for i in range(m + 1):
+            distance_matrix[i][0] = i
+        for j in range(n + 1):
+            distance_matrix[0][j] = j
+
+        # matris doldurulur
+        for i in range(1, m + 1):
+            for j in range(1, n + 1):
+                if s1[i - 1] == s2[j - 1]:
+                    cost = 0
+                else:
+                    cost = 1
+            
+                distance_matrix[i][j] = min(distance_matrix[i - 1][j] + 1,
+                                            distance_matrix[i][j - 1] + 1,
+                                            distance_matrix[i - 1][j - 1] + cost)
+
+        return distance_matrix[m][n]
+
+    def find_closest_pattern(self, unseen_pattern, known_patterns):
+        # öngörülmemiş bir örüntüye en yakın örüntü levenshtein mesafesiyle bulunur
+        min_distance = float('inf')
+        closest_pattern = None
+
+        for pattern in known_patterns:
+            dist = self._levenshtein_distance(unseen_pattern, pattern)
+            if dist < min_distance:
+                min_distance = dist
+                closest_pattern = pattern
+
+        return closest_pattern
