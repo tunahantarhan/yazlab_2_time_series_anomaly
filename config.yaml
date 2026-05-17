@@ -6,6 +6,7 @@ data:
 automata:
   window_size: 5
   alphabet_size: 4
+  subsequence_length: 30
 
 training:
   batch_size: 32
