@@ -29,7 +29,7 @@ class AutomataPreprocessor:
         # her bir parçanın ortalamasını alarak boyutu düşürürüz
         return np.array([np.mean(split) for split in splits])
 
-    def apply_sax(self, paa_data):
+    def apply_sax(self, paa_data, alphabet_size=None):
         # SAX (Symbolic Aggregate Approximation) dönüşümü uygulanır
         # SAX'ın doğru çalışması için verinin Z-normalize edilmesi (mean=0, std=1) şarttır.
         std_dev = np.std(paa_data)
@@ -38,15 +38,18 @@ class AutomataPreprocessor:
         else:
             normalized_data = (paa_data - np.mean(paa_data)) / std_dev
             
+        if alphabet_size is None:
+            alphabet_size = self.alphabet_size
+            
         # alfabeye uygun kesim noktaları seçilir
-        bp = self.breakpoints[self.alphabet_size]
+        bp = self.breakpoints[alphabet_size]
         
         # np.digitize verinin hangi aralığa düştüğünü sembolik indis (0, 1, 2...) olarak döndürür
         sax_symbols = np.digitize(normalized_data, bp)
         
         return sax_symbols
     
-    def extract_patterns(self, time_series, subsequence_length=None):
+    def extract_patterns(self, time_series, subsequence_length=None, alphabet_size=None):
         # zaman serisi üzerinde kayan pencere (sliding window) uygulayarak örüntü (pattern) çıkarılır
         # eğer özel olarak parametre gönderilmediyse merkezi config'den alınır
         if subsequence_length is None:
@@ -61,7 +64,7 @@ class AutomataPreprocessor:
             paa_result = self.apply_paa(window)
             
             # sax uygulanır
-            sax_result = self.apply_sax(paa_result)
+            sax_result = self.apply_sax(paa_result, alphabet_size=alphabet_size)
             
             # çıkan sembolleri tire ile birleştirip state oluşturulur ("0-1-2" vb.)
             pattern_str = "-".join(map(str, sax_result))
