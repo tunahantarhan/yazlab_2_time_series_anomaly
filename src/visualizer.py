@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
+import networkx as nx
 
 class AutomataVisualizer:
     def plot_transition_heatmap(self, transition_probs):
@@ -47,4 +48,41 @@ class AutomataVisualizer:
         plt.legend(loc="upper right")
         plt.grid(True, linestyle='--', alpha=0.5)
         plt.tight_layout()
+        plt.show()
+    
+    def plot_state_diagram(self, transition_probs):
+        # otomata durumlarını ve geçiş olasılıklarını gösteren state diagram çizilir
+        if not transition_probs:
+            print("HATA | Çizilecek geçiş matrisi bulunamadı.")
+            return
+
+        # G : Graph
+        G = nx.DiGraph()
+
+        # geçiş olasılıklarına göre yönlü bir grafik oluşturulur
+        for current_state, next_states in transition_probs.items():
+            for next_state, prob in next_states.items():
+                if prob > 0:  
+                    G.add_edge(current_state, next_state, weight=prob)
+
+        plt.figure(figsize=(12, 8))
+        
+        # düğümlerin ekrandaki yerleşimi için spring layout kullanılır
+        pos = nx.spring_layout(G, seed=42) 
+
+        # kenar kalınlıkları olasılık ağırlıklarına göre ayarlanır
+        edges = G.edges()
+        weights = [G[u][v]['weight'] * 3 for u, v in edges]
+
+        # grafik çizilir
+        nx.draw(G, pos, with_labels=True, node_color='lightblue', edge_color='gray',
+                node_size=3000, font_size=10, font_weight='bold', width=weights,
+                connectionstyle="arc3,rad=0.1")
+
+        # okların üzerine olasılık etiketleri yazılır
+        edge_labels = {(u, v): f"{G[u][v]['weight']:.2f}" for u, v in edges}
+        nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_color='red', font_weight='bold')
+
+        plt.title("Otomata Durum Geçiş Diyagramı (State Diagram)", fontsize=14, fontweight='bold')
+        plt.axis('off')
         plt.show()
