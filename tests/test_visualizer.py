@@ -33,3 +33,17 @@ def test_plot_anomalies_on_timeseries(mock_show):
     
     visualizer.plot_anomalies_on_timeseries(data, anomaly_indices)
     mock_show.assert_called_once()
+    
+@patch("src.visualizer.plt.show")
+def test_plot_state_diagram(mock_show):
+    # state diagram çizim fonksiyonunun çökmeden çalıştığını test eder
+    visualizer = AutomataVisualizer()
+        
+    # mock geçiş olasılıkları
+    transition_probs = {
+        "0-1-2": {"1-2-1": 0.8, "2-1-0": 0.2},
+        "1-2-1": {"2-1-0": 1.0}
+    }
+        
+    visualizer.plot_state_diagram(transition_probs)
+    mock_show.assert_called_once()
