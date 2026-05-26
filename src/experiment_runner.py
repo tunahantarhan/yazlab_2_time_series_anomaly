@@ -4,7 +4,8 @@ from src.metrics import (
     calculate_accuracy,
     calculate_f1_score,
     calculate_precision,
-    calculate_recall
+    calculate_recall,
+    calculate_confusion_matrix
 )
 
 from src.runtime import measure_runtime
@@ -53,11 +54,17 @@ def run_experiment(
     y_test,
     predictions
    )
-
+    
+    confusion_matrix = calculate_confusion_matrix(
+    y_test,
+    predictions
+   )
+    
     return {
         "accuracy": accuracy,
         "f1_score": f1_score,
         "runtime": runtime,
         "precision": precision,
-        "recall": recall
+        "recall": recall,
+        "confusion_matrix": confusion_matrix.tolist()
     }
