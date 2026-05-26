@@ -9,4 +9,13 @@ def create_sequences(data, window_size):
         X.append(data[i:i + window_size])
         y.append(data[i + window_size])
 
-    return np.array(X), np.array(y)
+    X = np.array(X)
+    y = np.array(y)
+
+    X = X.reshape(
+        X.shape[0],
+        X.shape[1],
+        1
+    )
+
+    return X, y
