@@ -33,3 +33,4 @@ def test_run_experiment_returns_metrics():
     assert "f1_score" in results
     assert "precision" in results
     assert "recall" in results
+    assert "confusion_matrix" in results
