@@ -12,10 +12,12 @@ def run_experiment(
     y_test
 ):
     runtime = measure_runtime(
-        model,
+    lambda: model.fit(
         X_train,
-        y_train
+        y_train,
+        verbose=0
     )
+)
 
     predictions = model.predict(
         X_test,
