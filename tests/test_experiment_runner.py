@@ -30,3 +30,4 @@ def test_run_experiment_returns_metrics():
 
     assert "accuracy" in results
     assert "runtime" in results
+    assert "f1_score" in results
