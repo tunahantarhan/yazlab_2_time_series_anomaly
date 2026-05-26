@@ -2,7 +2,9 @@ import numpy as np
 
 from src.metrics import (
     calculate_accuracy,
-    calculate_f1_score
+    calculate_f1_score,
+    calculate_precision,
+    calculate_recall
 )
 
 from src.runtime import measure_runtime
@@ -42,8 +44,20 @@ def run_experiment(
         predictions
     )
 
+    precision = calculate_precision(
+    y_test,
+    predictions
+   )
+
+    recall = calculate_recall(
+    y_test,
+    predictions
+   )
+
     return {
         "accuracy": accuracy,
         "f1_score": f1_score,
-        "runtime": runtime
+        "runtime": runtime,
+        "precision": precision,
+        "recall": recall
     }
