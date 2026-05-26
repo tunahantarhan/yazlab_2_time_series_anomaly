@@ -2,6 +2,7 @@ from src.feature_filter import drop_non_feature_columns
 from src.feature_target_split import split_features_and_target
 from src.dataset_split import split_dataset
 from src.normalizer import normalize_data
+from src.pca import apply_pca
 
 
 def prepare_dataset(
@@ -41,10 +42,20 @@ def prepare_dataset(
         X_test
     )
 
+    X_train_pca, X_val_pca = apply_pca(
+        X_train,
+        X_val
+    )
+
+    _, X_test_pca = apply_pca(
+        X_train,
+        X_test
+    )
+
     return {
-        "X_train": X_train,
-        "X_val": X_val,
-        "X_test": X_test,
+        "X_train": X_train_pca,
+        "X_val": X_val_pca,
+        "X_test": X_test_pca,
         "y_train": y_train,
         "y_val": y_val,
         "y_test": y_test
