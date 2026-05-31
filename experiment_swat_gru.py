@@ -7,11 +7,13 @@ from src.models.gru_model import build_gru_model
 from src.trainer import train_model
 
 
-print("SWAT yükleniyor...")
+print("SWAT yukleniyor...")
 
 df = pd.read_csv(
     "data/swat/merged.csv"
 )
+
+df.columns = df.columns.str.strip()
 
 df["Normal/Attack"] = (
     df["Normal/Attack"]
@@ -54,4 +56,4 @@ history = train_model(
     y_val_seq
 )
 
-print("Eğitim tamamlandı.")
+print("Egitim tamamlandi.")
