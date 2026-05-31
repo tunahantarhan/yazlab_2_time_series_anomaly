@@ -15,6 +15,9 @@ df = pd.read_csv(
 
 df.columns = df.columns.str.strip()
 
+df = df.ffill()
+df = df.bfill()
+
 df["Normal/Attack"] = (
     df["Normal/Attack"]
     .map({
