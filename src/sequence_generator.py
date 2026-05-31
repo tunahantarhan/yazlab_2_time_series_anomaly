@@ -19,3 +19,22 @@ def create_sequences(data, window_size):
     )
 
     return X, y
+
+
+def create_labeled_sequences(X, y, window_size):
+    X_sequences = []
+    y_sequences = []
+
+    for i in range(len(X) - window_size):
+        X_sequences.append(
+            X[i:i + window_size]
+        )
+
+        y_sequences.append(
+            y[i + window_size]
+        )
+
+    return (
+        np.array(X_sequences),
+        np.array(y_sequences)
+    )
