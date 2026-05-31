@@ -1,5 +1,14 @@
 # -*- coding: utf-8 -*-
+
 import pandas as pd
+
+from sklearn.metrics import (
+    accuracy_score,
+    precision_score,
+    recall_score,
+    f1_score,
+    confusion_matrix
+)
 
 from src.preprocessing_pipeline import prepare_dataset
 from src.sequence_generator import create_labeled_sequences
@@ -12,6 +21,8 @@ print("SWAT yukleniyor...")
 df = pd.read_csv(
     "data/swat/merged.csv"
 )
+
+df = df.head(50000)
 
 df.columns = df.columns.str.strip()
 
@@ -60,3 +71,50 @@ history = train_model(
 )
 
 print("Egitim tamamlandi.")
+
+predictions = model.predict(
+    X_val_seq,
+    verbose=0
+)
+
+predictions = (
+    predictions > 0.5
+).astype(int).flatten()
+
+accuracy = accuracy_score(
+    y_val_seq,
+    predictions
+)
+
+precision = precision_score(
+    y_val_seq,
+    predictions,
+    zero_division=0
+)
+
+recall = recall_score(
+    y_val_seq,
+    predictions,
+    zero_division=0
+)
+
+f1 = f1_score(
+    y_val_seq,
+    predictions,
+    zero_division=0
+)
+
+cm = confusion_matrix(
+    y_val_seq,
+    predictions
+)
+
+print()
+print("=== RESULTS ===")
+print(f"Accuracy : {accuracy:.4f}")
+print(f"Precision: {precision:.4f}")
+print(f"Recall   : {recall:.4f}")
+print(f"F1 Score : {f1:.4f}")
+print()
+print("Confusion Matrix")
+print(cm)
