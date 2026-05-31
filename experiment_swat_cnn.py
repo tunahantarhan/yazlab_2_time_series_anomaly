@@ -1,0 +1,131 @@
+# -*- coding: utf-8 -*-
+
+import pandas as pd
+
+from sklearn.metrics import (
+    accuracy_score,
+    precision_score,
+    recall_score,
+    f1_score,
+    confusion_matrix
+)
+
+from src.preprocessing_pipeline import prepare_dataset
+from src.sequence_generator import create_labeled_sequences
+from src.models.cnn_model import build_cnn_model
+from src.trainer import train_model
+
+
+print("SWAT yukleniyor...")
+
+df = pd.read_csv(
+    "data/swat/merged.csv"
+)
+
+df.columns = df.columns.str.strip()
+
+df = df.ffill()
+df = df.bfill()
+
+df["Normal/Attack"] = (
+    df["Normal/Attack"]
+    .map({
+        "Normal": 0,
+        "Attack": 1
+    })
+)
+
+normal_df = df[
+    df["Normal/Attack"] == 0
+].head(25000)
+
+attack_df = df[
+    df["Normal/Attack"] == 1
+].head(25000)
+
+df = pd.concat(
+    [normal_df, attack_df],
+    ignore_index=True
+)
+
+dataset = prepare_dataset(
+    df,
+    target_column="Normal/Attack",
+    columns_to_drop=["Timestamp"]
+)
+
+X_train_seq, y_train_seq = create_labeled_sequences(
+    dataset["X_train"],
+    dataset["y_train"],
+    window_size=5
+)
+
+X_val_seq, y_val_seq = create_labeled_sequences(
+    dataset["X_val"],
+    dataset["y_val"],
+    window_size=5
+)
+
+model = build_cnn_model(
+    input_shape=(
+        X_train_seq.shape[1],
+        X_train_seq.shape[2]
+    )
+)
+
+history = train_model(
+    model,
+    X_train_seq,
+    y_train_seq,
+    X_val_seq,
+    y_val_seq
+)
+
+print("Egitim tamamlandi.")
+
+predictions = model.predict(
+    X_val_seq,
+    verbose=0
+)
+
+predictions = (
+    predictions > 0.5
+).astype(int).flatten()
+
+accuracy = accuracy_score(
+    y_val_seq,
+    predictions
+)
+
+precision = precision_score(
+    y_val_seq,
+    predictions,
+    zero_division=0
+)
+
+recall = recall_score(
+    y_val_seq,
+    predictions,
+    zero_division=0
+)
+
+f1 = f1_score(
+    y_val_seq,
+    predictions,
+    zero_division=0
+)
+
+cm = confusion_matrix(
+    y_val_seq,
+    predictions
+)
+
+print()
+print("=== RESULTS ===")
+print(f"Accuracy : {accuracy:.4f}")
+print(f"Precision: {precision:.4f}")
+print(f"Recall   : {recall:.4f}")
+print(f"F1 Score : {f1:.4f}")
+print()
+print("Confusion Matrix")
+print(cm)
