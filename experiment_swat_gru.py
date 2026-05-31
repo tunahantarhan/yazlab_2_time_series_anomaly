@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import pandas as pd
 
 from src.preprocessing_pipeline import prepare_dataset
