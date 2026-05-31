@@ -22,6 +22,9 @@ def create_sequences(data, window_size):
 
 
 def create_labeled_sequences(X, y, window_size):
+    X = np.array(X)
+    y = np.array(y)
+
     X_sequences = []
     y_sequences = []
 
@@ -29,7 +32,6 @@ def create_labeled_sequences(X, y, window_size):
         X_sequences.append(
             X[i:i + window_size]
         )
-
         y_sequences.append(
             y[i + window_size]
         )
