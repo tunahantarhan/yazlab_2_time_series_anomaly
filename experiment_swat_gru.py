@@ -22,8 +22,6 @@ df = pd.read_csv(
     "data/swat/merged.csv"
 )
 
-df = df.head(50000)
-
 df.columns = df.columns.str.strip()
 
 df = df.ffill()
@@ -35,6 +33,19 @@ df["Normal/Attack"] = (
         "Normal": 0,
         "Attack": 1
     })
+)
+
+normal_df = df[
+    df["Normal/Attack"] == 0
+].head(25000)
+
+attack_df = df[
+    df["Normal/Attack"] == 1
+].head(25000)
+
+df = pd.concat(
+    [normal_df, attack_df],
+    ignore_index=True
 )
 
 dataset = prepare_dataset(
