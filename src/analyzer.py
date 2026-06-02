@@ -52,34 +52,33 @@ class ParameterAnalyzer:
 if __name__ == "__main__":
     analyzer = ParameterAnalyzer()
 
-    print("-> Analiz icin SWAT verisi yukleniyor...")
+    print("-> Analiz icin BATADAL verisi yukleniyor...")
 
-    raw_data = load_dataset(
-        "data/swat/merged.csv"
+    raw_data_df = load_dataset(
+        "data/batadal/training_dataset_1.csv"
     )
 
-    raw_data.columns = raw_data.columns.str.strip()
-    raw_data = raw_data.ffill()
-    raw_data = raw_data.bfill()
+    raw_data_df.columns = raw_data_df.columns.str.strip()
+    raw_data_df = raw_data_df.ffill().bfill()
 
-    if "Timestamp" in raw_data.columns:
-        raw_data = raw_data.drop(
-            columns=["Timestamp"]
+    if "DATETIME" in raw_data_df.columns:
+        raw_data_df = raw_data_df.drop(
+            columns=["DATETIME"]
         )
 
-    if "Normal/Attack" in raw_data.columns:
-        raw_data["Normal/Attack"] = (
-            raw_data["Normal/Attack"]
-            .map({
-                "Normal": 0,
-                "Attack": 1
-            })
+    if "ATT_FLAG" in raw_data_df.columns:
+        raw_data_df = raw_data_df.drop(
+            columns=["ATT_FLAG"]
         )
 
-    raw_data = raw_data.head(50000)
+    # 1D sensör verisi ayrıştırılarak otomat matrisi oluşturulur
+    sensor_column = raw_data_df.columns[0]
+    print(f"-> Analiz icin secilen sensor sutunu: {sensor_column}")
+
+    raw_data_series = raw_data_df[sensor_column].head(5000).values
 
     final_results = analyzer.run_grid_search(
-        raw_data,
+        raw_data_series,
         sizes=[3, 4, 5, 6]
     )
 
