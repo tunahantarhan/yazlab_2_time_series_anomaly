@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import pandas as pd
+import time
 
 from sklearn.metrics import (
     accuracy_score,
@@ -52,6 +53,8 @@ model = build_cnn_model(
     )
 )
 
+train_start = time.time()
+
 history = train_model(
     model,
     X_train_seq,
@@ -60,12 +63,20 @@ history = train_model(
     y_val_seq
 )
 
+train_end = time.time()
+training_time = train_end - train_start
+
 print("Egitim tamamlandi.")
+
+inference_start = time.time()
 
 predictions = model.predict(
     X_val_seq,
     verbose=0
 )
+
+inference_end = time.time()
+inference_time = inference_end - inference_start
 
 predictions = (
     predictions > 0.5
@@ -105,6 +116,8 @@ print(f"Accuracy : {accuracy:.4f}")
 print(f"Precision: {precision:.4f}")
 print(f"Recall   : {recall:.4f}")
 print(f"F1 Score : {f1:.4f}")
+print(f"Training Time : {training_time:.4f} sn")
+print(f"Inference Time: {inference_time:.4f} sn")
 print()
 print("Confusion Matrix")
 print(cm)
