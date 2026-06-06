@@ -12,6 +12,7 @@ from src.sequence_generator import create_labeled_sequences
 from src.models.gru_model import build_gru_model
 from src.models.cnn_model import build_cnn_model
 from src.trainer import train_model
+from src.statistical_tests import run_wilcoxon_test, run_mcnemar_test
 
 
 SEEDS = [42, 123, 2026, 7, 999]
@@ -117,7 +118,9 @@ def run_single_model(seed, model_type):
         "seed": seed,
         "model": model_type,
         "f1_score": f1,
-        "training_time": training_time
+        "training_time": training_time,
+        "predictions": predictions,
+        "y_true": y_val
     }
 
 
@@ -149,6 +152,9 @@ def summarize_results(results, model_name):
 
 
 if __name__ == "__main__":
+    import warnings
+    warnings.filterwarnings("ignore") # output kısmında uyarı kalabalığı engellenir
+    
     print("SWAT 5 seed deneyleri baslatiliyor...")
 
     gru_results = run_for_seeds(
@@ -176,3 +182,39 @@ if __name__ == "__main__":
         cnn_results,
         "cnn"
     )
+
+    # ==== GERCEK VERİLERLE İSTATİSTİKSEL TESTLERİN UYGULANMASI ====
+    print("\n" + "="*55)
+    print("==== GERÇEK VERİLERLE İSTATİSTİKSEL TEST SONUÇLARI ====")
+    print("="*55)
+
+    # Wilcoxon Testi (5 Seed F1 Skorları üzerinden)
+    gru_f1_scores = [res["f1_score"] for res in gru_results]
+    cnn_f1_scores = [res["f1_score"] for res in cnn_results]
+    
+    try:
+        w_stat, w_pval = run_wilcoxon_test(gru_f1_scores, cnn_f1_scores)
+        print("\n[Wilcoxon Isaretli Rutbe Testi]")
+        print(f"Statistic: {w_stat:.4f} | P-value: {w_pval:.4f}")
+        if w_pval < 0.05:
+            print("Yorum: GRU ve CNN F1 skorları arasında istatistiksel olarak anlamlı fark vardır.")
+        else:
+            print("Yorum: GRU ve CNN F1 skorları arasında istatistiksel olarak anlamlı fark YOKTUR.")
+    except Exception as e:
+        print(f"\n[Wilcoxon Testi]: Skorlar arasında varyans yok. Hata: {e}")
+
+    # McNemar Testi (Seed 42'nin Tahminleri üzerinden)
+    y_true_seed42 = gru_results[0]["y_true"]
+    gru_preds_seed42 = gru_results[0]["predictions"]
+    cnn_preds_seed42 = cnn_results[0]["predictions"]
+
+    try:
+        m_stat, m_pval = run_mcnemar_test(y_true_seed42, gru_preds_seed42, cnn_preds_seed42)
+        print("\n[McNemar Testi] (Seed 42 Tahminleri)")
+        print(f"Statistic: {m_stat:.4f} | P-value: {m_pval:.4f}")
+        if m_pval < 0.05:
+            print("Yorum: Modellerin hata yaptıkları örüntüler birbirinden FARKLIDIR.")
+        else:
+            print("Yorum: Modeller benzer noktalarda hata yapmıştır, tahminler BENZERDİR.")
+    except Exception as e:
+        print(f"\n[McNemar Testi]: Hesaplanamadı. Hata: {e}")
