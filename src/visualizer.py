@@ -1,6 +1,10 @@
 import matplotlib
-matplotlib.use('TkAgg')
-
+import platform
+if platform.system() == 'Darwin':      # Eğer sistem Mac ise
+    matplotlib.use('MacOSX')
+elif platform.system() == 'Windows':   # Eğer sistem Windows ise
+    matplotlib.use('TkAgg')
+    
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
