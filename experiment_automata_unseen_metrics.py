@@ -8,8 +8,8 @@ from src.automata_core import AutomataPreprocessor
 TRAIN_RATIO = 0.60
 TEST_RATIO = 0.20
 
-WINDOW_SIZE = 5
-ALPHABET_SIZE = 6
+WINDOW_SIZE = 4
+ALPHABET_SIZE = 3
 
 
 print("Automata unseen analizi baslatiliyor...")
