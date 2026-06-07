@@ -19,7 +19,7 @@ from src.models.cnn_model import build_cnn_model
 from src.models.lstm_model import build_lstm_model
 
 
-WINDOW_SIZE = 5
+WINDOW_SIZE = 4
 
 
 def load_swat():
