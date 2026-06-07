@@ -14,8 +14,8 @@ from sklearn.metrics import (
 from src.automata_core import AutomataPreprocessor
 
 
-WINDOW_SIZE = 5
-ALPHABET_SIZE = 6
+WINDOW_SIZE = 4
+ALPHABET_SIZE = 3
 THRESHOLD = 0.001
 
 
