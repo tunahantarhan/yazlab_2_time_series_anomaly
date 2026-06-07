@@ -122,10 +122,14 @@ for i in range(len(test_patterns)):
     else:
         predictions.append(0)
 
-test_labels_aligned = test_labels[
-    WINDOW_SIZE:
-    WINDOW_SIZE + len(predictions)
-]
+min_len = min(
+    len(test_labels),
+    len(predictions)
+)
+
+test_labels_aligned = test_labels[:min_len]
+predictions = predictions[:min_len]
+
 
 predictions = np.array(predictions)
 
