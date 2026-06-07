@@ -41,8 +41,8 @@ train_start = time.time()
 
 patterns = preprocessor.extract_patterns(
     time_series=series,
-    subsequence_length=5,
-    alphabet_size=6
+    subsequence_length=4,
+    alphabet_size=3
 )
 
 transition_probs = preprocessor.calculate_transition_probabilities(
