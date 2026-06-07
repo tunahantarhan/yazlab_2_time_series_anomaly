@@ -69,13 +69,13 @@ dataset["X_val"] = add_gaussian_noise(
 X_train_seq, y_train_seq = create_labeled_sequences(
     dataset["X_train"],
     dataset["y_train"],
-    window_size=5
+    window_size=4
 )
 
 X_val_seq, y_val_seq = create_labeled_sequences(
     dataset["X_val"],
     dataset["y_val"],
-    window_size=5
+    window_size=4
 )
 
 model = build_cnn_model(
